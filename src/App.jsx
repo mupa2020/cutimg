@@ -16,6 +16,10 @@ function App() {
   const [cropLeft, setCropLeft] = useState(0);
   const [cropRight, setCropRight] = useState(0);
 
+  // Quality Settings
+  const [outputFormat, setOutputFormat] = useState('original');
+  const [quality, setQuality] = useState(0.92);
+
   useEffect(() => {
     // Cleanup
     return () => {
@@ -63,9 +67,29 @@ function App() {
       canvas.width = contentWidth;
       canvas.height = sliceHeight;
 
+      // Determine final output type
+      let finalType = outputFormat;
+      if (finalType === 'original') {
+        finalType = file.type;
+      }
+
+      // Map MIME type to extension
+      const getExtension = (mimeType) => {
+        if (mimeType === 'image/png') return 'png';
+        if (mimeType === 'image/jpeg') return 'jpg';
+        return 'jpg'; // fallback
+      };
+      const ext = getExtension(finalType);
+
       for (let i = 0; i < totalSlices; i++) {
-        // Clear canvas
+        // Clear canvas (important for PNG transparency)
         ctx.clearRect(0, 0, contentWidth, sliceHeight);
+
+        // If Output is JPG, fill white background to prevent black transparent areas
+        if (finalType === 'image/jpeg') {
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, contentWidth, sliceHeight);
+        }
 
         // Calculate source Y relative to original image
         const sourceY = cropStart + (i * sliceHeight);
@@ -79,6 +103,11 @@ function App() {
         // Adjust canvas height for the last slice if needed
         if (i === totalSlices - 1) {
           canvas.height = drawHeight;
+          // Re-fill background if height changed and it's JPG
+          if (finalType === 'image/jpeg') {
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, contentWidth, drawHeight);
+          }
         } else {
           canvas.height = sliceHeight;
         }
@@ -89,8 +118,8 @@ function App() {
           0, 0, contentWidth, drawHeight               // Dest: x, y, w, h
         );
 
-        const blob = await new Promise(resolve => canvas.toBlob(resolve, file.type === 'image/png' ? 'image/png' : 'image/jpeg'));
-        const fileName = `${file.name.split('.')[0]}_${String(i + 1).padStart(3, '0')}.${file.type === 'image/png' ? 'png' : 'jpg'}`;
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, finalType, quality));
+        const fileName = `${file.name.split('.')[0]}_${String(i + 1).padStart(3, '0')}.${ext}`;
         zip.file(fileName, blob);
       }
 
@@ -121,6 +150,10 @@ function App() {
               <SlicerControls
                 sliceHeight={sliceHeight}
                 setSliceHeight={setSliceHeight}
+                outputFormat={outputFormat}
+                setOutputFormat={setOutputFormat}
+                quality={quality}
+                setQuality={setQuality}
                 onSlice={handleSliceAndDownload}
                 isProcessing={isProcessing}
               />
