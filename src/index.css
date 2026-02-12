@@ -1,0 +1,358 @@
+:root {
+  --bg-color: #0f172a;
+  --card-bg: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --accent-color: #3b82f6;
+  --accent-hover: #2563eb;
+  --gradient-bg: linear-gradient(135deg, #0f172a 0%, #1e1e24 100%);
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--gradient-bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.app-header h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  background: linear-gradient(to right, #60a5fa, #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 0 0.5rem 0;
+}
+
+.app-header p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+/* Drop Zone */
+.drop-zone {
+  border: 2px dashed #334155;
+  border-radius: 1rem;
+  padding: 4rem;
+  text-align: center;
+  background: rgba(30, 41, 59, 0.5);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.drop-zone:hover,
+.drop-zone.dragging {
+  border-color: var(--accent-color);
+  background: rgba(59, 130, 246, 0.1);
+  transform: scale(1.01);
+}
+
+.drop-zone .icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 1rem;
+  color: var(--text-secondary);
+}
+
+.drop-zone p {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.drop-zone span {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+/* Workspace */
+.workspace {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.sidebar {
+  background: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid #334155;
+  position: sticky;
+  top: 2rem;
+}
+
+.input-group {
+  margin-bottom: 1.5rem;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #334155;
+  background: #0f172a;
+  color: white;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--accent-color);
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border: 1px solid #334155;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+}
+
+/* Preview Area */
+.preview-area {
+  background: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid #334155;
+  text-align: center;
+  /* Prevent drag from scrolling page on mobile */
+  touch-action: none;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.preview-header h3 {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.dimensions-badge {
+  background: rgba(15, 23, 42, 0.6);
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.85rem;
+  color: var(--accent-color);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.image-wrapper {
+  position: relative;
+  display: inline-block;
+  /* Schrink wrap image */
+  overflow: hidden;
+  /* Keep overlays inside */
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  /* Prevent selecting image while dragging handles */
+  user-select: none;
+}
+
+.image-wrapper img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  /* Disable default drag behavior */
+  -webkit-user-drag: none;
+}
+
+/* Crop Overlays */
+.crop-overlay {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  /* Let clicks pass through */
+  z-index: 10;
+}
+
+.crop-overlay.top {
+  top: 0;
+  left: 0;
+  right: 0;
+  border-bottom: 2px solid #22c55e;
+}
+
+.crop-overlay.bottom {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-top: 2px solid #22c55e;
+}
+
+.crop-overlay.left {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  border-right: 2px solid #22c55e;
+}
+
+.crop-overlay.right {
+  top: 0;
+  bottom: 0;
+  right: 0;
+  border-left: 2px solid #22c55e;
+}
+
+/* Crop Handles */
+.crop-handle {
+  position: absolute;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.crop-handle.horizontal {
+  left: 0;
+  right: 0;
+  height: 20px;
+  transform: translateY(-50%);
+  cursor: row-resize;
+}
+
+.crop-handle.vertical {
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  transform: translateX(-50%);
+  cursor: col-resize;
+}
+
+.crop-handle:hover::after,
+.crop-handle:active::after {
+  background: #22c55e;
+}
+
+/* Visible Line */
+.crop-handle.horizontal::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: transparent;
+}
+
+.crop-handle.vertical::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: transparent;
+}
+
+/* Label on Handle */
+.handle-label {
+  background: #22c55e;
+  color: #000;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+
+.vertical-label {
+  transform: rotate(90deg);
+}
+
+.crop-handle:hover .handle-label,
+.crop-handle:active .handle-label,
+.image-wrapper:hover .handle-label {
+  opacity: 1;
+}
+
+.hint {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+  }
+}
