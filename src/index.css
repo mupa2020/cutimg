@@ -306,7 +306,8 @@ body {
 .crop-handle.horizontal {
   left: 0;
   right: 0;
-  height: 20px;
+  height: 40px;
+  /* Increased hit area */
   transform: translateY(-50%);
   cursor: row-resize;
 }
@@ -314,9 +315,16 @@ body {
 .crop-handle.vertical {
   top: 0;
   bottom: 0;
-  width: 20px;
+  width: 40px;
+  /* Increased hit area */
   transform: translateX(-50%);
   cursor: col-resize;
+}
+
+.crop-handle:hover,
+.crop-handle:active {
+  background: rgba(34, 197, 94, 0.1);
+  /* Highlight active drag area */
 }
 
 .crop-handle:hover::after,
