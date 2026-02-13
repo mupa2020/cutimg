@@ -21,7 +21,7 @@ const SlicerControls = ({
                     placeholder="e.g. 1000"
                 />
             </div>
-            <div className="input-range-wrapper" style={{ marginBottom: '1.5rem', marginTop: '-1rem' }}>
+            <div className="input-range-wrapper" style={{ marginBottom: '1.5rem', marginTop: '0.5rem' }}>
                 <input
                     type="range"
                     min="100"
@@ -31,6 +31,22 @@ const SlicerControls = ({
                     onChange={(e) => setSliceHeight(Number(e.target.value))}
                     style={{ width: '100%', display: 'block' }}
                 />
+            </div>
+
+            <div className="preset-group" style={{ marginBottom: '1.5rem' }}>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: '#94a3b8' }}>Quick Presets</label>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    {[2, 3, 4].map(num => (
+                        <button
+                            key={num}
+                            className="btn-secondary"
+                            style={{ marginTop: 0, padding: '0.5rem', flex: 1 }}
+                            onClick={() => setSliceHeight(Math.floor((maxSliceHeight || 1000) / num))}
+                        >
+                            1/{num}
+                        </button>
+                    ))}
+                </div>
             </div>
 
             <div className="input-group">
