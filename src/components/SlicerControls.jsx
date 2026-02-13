@@ -2,6 +2,7 @@ import React from 'react';
 
 const SlicerControls = ({
     sliceHeight, setSliceHeight,
+    maxSliceHeight,
     outputFormat, setOutputFormat,
     quality, setQuality,
     onSlice, isProcessing
@@ -15,8 +16,20 @@ const SlicerControls = ({
                     id="sliceHeight"
                     value={sliceHeight}
                     onChange={(e) => setSliceHeight(Number(e.target.value))}
-                    min="1"
+                    min="100"
+                    max={maxSliceHeight}
                     placeholder="e.g. 1000"
+                />
+            </div>
+            <div className="input-range-wrapper" style={{ marginBottom: '1.5rem', marginTop: '-1rem' }}>
+                <input
+                    type="range"
+                    min="100"
+                    max={Math.max(100, maxSliceHeight || 1000)}
+                    step="10"
+                    value={sliceHeight}
+                    onChange={(e) => setSliceHeight(Number(e.target.value))}
+                    style={{ width: '100%', display: 'block' }}
                 />
             </div>
 

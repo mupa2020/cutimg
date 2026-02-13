@@ -150,6 +150,7 @@ function App() {
               <SlicerControls
                 sliceHeight={sliceHeight}
                 setSliceHeight={setSliceHeight}
+                maxSliceHeight={cropEnd - cropStart}
                 outputFormat={outputFormat}
                 setOutputFormat={setOutputFormat}
                 quality={quality}
