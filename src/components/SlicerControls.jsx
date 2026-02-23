@@ -5,6 +5,7 @@ const SlicerControls = ({
     maxSliceHeight,
     outputFormat, setOutputFormat,
     quality, setQuality,
+    estimatedSize, isCalculatingSize,
     onSlice, isProcessing
 }) => {
     return (
@@ -78,6 +79,21 @@ const SlicerControls = ({
                     />
                 </div>
             )}
+
+            <div className="estimated-size" style={{ marginBottom: '1.5rem', padding: '1rem', background: '#334155', borderRadius: '0.5rem', textAlign: 'center' }}>
+                <span style={{ fontSize: '0.9rem', color: '#94a3b8' }}>Estimated Output Size:</span>
+                <div style={{ fontWeight: 'bold', fontSize: '1.2rem', marginTop: '0.25rem', color: isCalculatingSize ? '#94a3b8' : '#fff' }}>
+                    {isCalculatingSize ? (
+                        'Calculating...'
+                    ) : estimatedSize ? (
+                        estimatedSize > 1024 * 1024
+                            ? `${(estimatedSize / (1024 * 1024)).toFixed(2)} MB`
+                            : `${(estimatedSize / 1024).toFixed(2)} KB`
+                    ) : (
+                        'Unknown'
+                    )}
+                </div>
+            </div>
 
             <button
                 className="btn-primary"

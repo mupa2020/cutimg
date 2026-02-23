@@ -20,6 +20,10 @@ function App() {
   const [outputFormat, setOutputFormat] = useState('original');
   const [quality, setQuality] = useState(0.92);
 
+  // Estimation
+  const [estimatedSize, setEstimatedSize] = useState(null);
+  const [isCalculatingSize, setIsCalculatingSize] = useState(false);
+
   useEffect(() => {
     // Cleanup
     return () => {
@@ -42,6 +46,71 @@ function App() {
     };
     img.src = url;
   };
+
+  useEffect(() => {
+    if (!previewUrl || cropEnd - cropStart <= 0 || cropRight - cropLeft <= 0) {
+      setEstimatedSize(null);
+      return;
+    }
+
+    setIsCalculatingSize(true);
+    const timeoutId = setTimeout(async () => {
+      try {
+        const img = new Image();
+        img.src = previewUrl;
+        await new Promise((resolve) => {
+          img.onload = resolve;
+        });
+
+        const contentWidth = cropRight - cropLeft;
+        const contentHeight = cropEnd - cropStart;
+
+        if (contentWidth <= 0 || contentHeight <= 0) {
+          setEstimatedSize(null);
+          setIsCalculatingSize(false);
+          return;
+        }
+
+        let drawHeight = Math.min(sliceHeight, contentHeight);
+        const totalSlices = Math.ceil(contentHeight / sliceHeight);
+
+        const canvas = document.createElement('canvas');
+        canvas.width = contentWidth;
+        canvas.height = drawHeight;
+        const ctx = canvas.getContext('2d');
+
+        let finalType = outputFormat;
+        if (finalType === 'original') {
+          finalType = file ? file.type : 'image/jpeg';
+        }
+
+        if (finalType === 'image/jpeg') {
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, contentWidth, drawHeight);
+        }
+
+        ctx.drawImage(
+          img,
+          cropLeft, cropStart, contentWidth, drawHeight,
+          0, 0, contentWidth, drawHeight
+        );
+
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, finalType, quality));
+
+        if (blob) {
+          // Rough estimation: size of first slice * total slices
+          const totalBytes = blob.size * totalSlices;
+          setEstimatedSize(totalBytes);
+        }
+      } catch (e) {
+        console.error("Error calculating size", e);
+      } finally {
+        setIsCalculatingSize(false);
+      }
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(timeoutId);
+  }, [previewUrl, cropStart, cropEnd, cropLeft, cropRight, sliceHeight, outputFormat, quality, file]);
 
   const handleSliceAndDownload = async () => {
     if (!file || !sliceHeight) return;
@@ -155,6 +224,8 @@ function App() {
                 setOutputFormat={setOutputFormat}
                 quality={quality}
                 setQuality={setQuality}
+                estimatedSize={estimatedSize}
+                isCalculatingSize={isCalculatingSize}
                 onSlice={handleSliceAndDownload}
                 isProcessing={isProcessing}
               />
