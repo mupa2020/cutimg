@@ -27,7 +27,6 @@ const SlicerControls = ({
                     type="range"
                     min="100"
                     max={Math.max(100, maxSliceHeight || 1000)}
-                    step="10"
                     value={sliceHeight}
                     onChange={(e) => setSliceHeight(Number(e.target.value))}
                     style={{ width: '100%', display: 'block' }}
