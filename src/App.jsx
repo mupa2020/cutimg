@@ -188,12 +188,22 @@ function App() {
         );
 
         const blob = await new Promise(resolve => canvas.toBlob(resolve, finalType, quality));
+
+        if (totalSlices === 1) {
+          // Direct download if only 1 slice
+          const singleFileName = `${file.name.split('.')[0]}_processed.${ext}`;
+          saveAs(blob, singleFileName);
+          return; // Exit early
+        }
+
         const fileName = `${file.name.split('.')[0]}_${String(i + 1).padStart(3, '0')}.${ext}`;
         zip.file(fileName, blob);
       }
 
-      const content = await zip.generateAsync({ type: 'blob' });
-      saveAs(content, `${file.name.split('.')[0]}_slices.zip`);
+      if (totalSlices > 1) {
+        const content = await zip.generateAsync({ type: 'blob' });
+        saveAs(content, `${file.name.split('.')[0]}_slices.zip`);
+      }
 
     } catch (error) {
       console.error("Error slicing image:", error);
